@@ -5,55 +5,122 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.databinding.DataBindingUtil
+import com.example.uiassign.databinding.FragmentRegisterBinding
+import com.google.android.material.snackbar.Snackbar
+import java.util.regex.Pattern
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
-/**
- * A simple [Fragment] subclass.
- * Use the [RegisterFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class RegisterFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
-    }
-
+    private lateinit var bindingRegister: FragmentRegisterBinding
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_register, container, false)
+        bindingRegister =
+            DataBindingUtil.inflate(inflater, R.layout.fragment_register, container, false)
+        clickHandle()
+
+        bindingRegister.TermsAndCondition.setOnClickListener {
+            openTermsFrag()
+        }
+        return bindingRegister.root
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment RegisterFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            RegisterFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
+    private fun clickHandle() {
+        bindingRegister.registerButton.setOnClickListener {
+            if (checkEmpty()) {
+                if (checkSamePass()) {
+                    if (isChecked()) {
+                        if (validate(bindingRegister.email.text.toString().trim())) {
+                            // Toast.makeText(requireActivity(),"Successful Login ",Toast.LENGTH_LONG).show()
+                            Snackbar.make(
+                                bindingRegister.root,
+                                "Successful Login",
+                                Snackbar.LENGTH_LONG
+                            ).show()
+                            openFrag()
+                        } else
+                            Snackbar.make(
+                                bindingRegister.root,
+                                "Enter A Valid Email",
+                                Snackbar.LENGTH_LONG
+                            ).show()
+                    } else
+                        Snackbar.make(
+                            bindingRegister.root,
+                            "Please Accept Terms And Conditions",
+                            Snackbar.LENGTH_LONG
+                        ).show()
+                } else
+                    Snackbar.make(
+                        bindingRegister.root,
+                        "Password Do Not Match",
+                        Snackbar.LENGTH_LONG
+                    ).show()
+
             }
+        }
+        bindingRegister.loginPageBtn.setOnClickListener {
+            openFrag()
+        }
+
     }
+
+    private fun openFrag() {
+        requireActivity().supportFragmentManager.beginTransaction()
+            .replace(R.id.fragmentContainer, LoginFragment()).addToBackStack("").commit()
+    }
+
+    private fun openTermsFrag() {
+        requireActivity().supportFragmentManager.beginTransaction()
+            .replace(R.id.fragmentContainer, TermsAndCondition()).addToBackStack("").commit()
+
+    }
+
+    private fun checkEmpty(): Boolean {
+        if (bindingRegister.Name.text.isNullOrEmpty()) {
+            bindingRegister.Name.error = "Field Required"
+            return false
+        }
+        if (bindingRegister.email.text.isNullOrEmpty()) {
+            bindingRegister.email.error = "Field Required"
+            return false
+        }
+        if (bindingRegister.password.text.isNullOrEmpty()) {
+            bindingRegister.password.error = "Field Required"
+            return false
+        }
+        if (bindingRegister.passRetype.text.isNullOrEmpty()) {
+            bindingRegister.passRetype.error = "Field Required"
+            return false
+        }
+        return true
+    }
+
+    private fun validate(email: String): Boolean {
+
+        return Pattern.compile(
+            "^(([\\w-]+\\.)+[\\w-]+|([a-zA-Z]{1}|[\\w-]{2,}))@"
+                    + "((([0-1]?[0-9]{1,2}|25[0-5]|2[0-4][0-9])\\.([0-1]?"
+                    + "[0-9]{1,2}|25[0-5]|2[0-4][0-9])\\."
+                    + "([0-1]?[0-9]{1,2}|25[0-5]|2[0-4][0-9])\\.([0-1]?"
+                    + "[0-9]{1,2}|25[0-5]|2[0-4][0-9])){1}|"
+                    + "([a-zA-Z]+[\\w-]+\\.)+[a-zA-Z]{2,4})$"
+        ).matcher(email).matches()
+
+
+    }
+
+    private fun checkSamePass(): Boolean {
+        return bindingRegister.password.text.toString() == bindingRegister.passRetype.text.toString()
+    }
+
+    private fun isChecked(): Boolean {
+        return bindingRegister.checkbox.isChecked
+    }
+
+
+
 }
