@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resources>
+  <string name="app_name">GcUi</string>
+  <string name="giftcardstore">Gift Card Store</string>
+  <string name="giftingmadeeasy">Gifting made easy</string>
+  <string name="my_gift_cards">My Gift Cards</string>
+  <string name="birthday_gift_to_your_loved_ones">Birthday Gift to your loved ones</string>
+  <string name="birthdaygiftcard">BIRTHDAY  GIFT  CARD</string>
+  <string name="load_your_gift_card_upto">LOAD YOUR GIFT CARD UPTO</string>
+  <string name="loadyourgiftcardupto5000aed_1">5000 AED</string>
+  <string name="gift">Gift to your loved ones</string>
+  <string name="gc">GIFT CARD FOR ANY OCCASION</string>
+
+</resources>
+
